@@ -1,0 +1,1 @@
+This project builds the analytical backbone of oilseed market analysis.  This includes building supply and use values, market prices, and crush calcluations.
