@@ -1,0 +1,16 @@
+# git ignore file patterns
+
+!.ipynb
+
+docs/
+venv/
+raw_data/
+
+*.png
+*.csv
+
+# Enviornment Variables
+*env_vars.py*
+
+# VS Code-specific files
+.DS_Store
