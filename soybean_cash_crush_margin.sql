@@ -1,3 +1,5 @@
+DROP VIEW soy_cash_crush_margins IF EXISTS;
+
 WITH soybean_costs AS (
     SELECT 
         date_trunc('week', report_begin_date) AS week_of, 
@@ -39,21 +41,23 @@ soybean_revenues AS (
         AND m2.commodity IN ('Soybean Meal')
     ORDER BY m1."trade Loc", week_of desc
 )
-SELECT 
-    r.week_of AS week_of, 
-    r."trade Loc" AS trade_loc, 
-    c.trans_mode AS soy_transmode, 
-    r.soy_oil_transmode AS soy_oil_transmode, 
-    r.soy_meal_transmode AS soy_meal_transmode, 
-    c.crush_costs AS soy_costs,
-    r.soy_oil_revenues AS soy_oil_revenues,
-    r.soy_meal_revenues AS soy_meal_revenues,
-    r.crush_revenues AS crush_revenues, 
-    c.crush_costs AS crush_costs, 
-    r.crush_revenues - c.crush_costs AS crush_margin,
-    ROUND(CAST(r.soy_oil_revenues/r.crush_revenues * 100 AS numeric), 2) AS crush_oil_share,
-    ROUND(CAST(r.soy_meal_revenues/r.crush_revenues * 100 AS numeric), 2) AS crush_meal_share
-FROM soybean_revenues as r
-LEFT JOIN soybean_costs as c
-ON r.week_of = c.week_of AND r."trade Loc" = c."trade Loc"
+CREATE VIEW soy_cash_crush_margins AS (
+    SELECT 
+        r.week_of AS week_of, 
+        r."trade Loc" AS trade_loc, 
+        c.trans_mode AS soy_transmode, 
+        r.soy_oil_transmode AS soy_oil_transmode, 
+        r.soy_meal_transmode AS soy_meal_transmode, 
+        c.crush_costs AS soy_costs,
+        r.soy_oil_revenues AS soy_oil_revenues,
+        r.soy_meal_revenues AS soy_meal_revenues,
+        r.crush_revenues AS crush_revenues, 
+        c.crush_costs AS crush_costs, 
+        r.crush_revenues - c.crush_costs AS crush_margin,
+        ROUND(CAST(r.soy_oil_revenues/r.crush_revenues * 100 AS numeric), 2) AS crush_oil_share,
+        ROUND(CAST(r.soy_meal_revenues/r.crush_revenues * 100 AS numeric), 2) AS crush_meal_share
+    FROM soybean_revenues as r
+    LEFT JOIN soybean_costs as c
+    ON r.week_of = c.week_of AND r."trade Loc" = c."trade Loc"
+)
 ;
