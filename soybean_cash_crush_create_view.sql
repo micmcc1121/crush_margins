@@ -1,27 +1,5 @@
-'''
-Script to create the location-level soybean cash crush margin 
-view in the agmktdb Postgresql Database
+-- proc.soy_cash_crush_margins source
 
-created by: Michael McConnell
-created on: October 8, 2025
-
-To do:
-    1)
-    2)
-'''
-
-# Libraries
-from sqlalchemy import create_engine
-import psycopg2
-
-# Create connection
-
-eng = create_engine('postgresql://mike:Finnsberries@pilapp/mktdb')
-conn = eng.connect()
-
-# SQL statement
-
-stmt = '''
 CREATE OR REPLACE VIEW proc.soy_cash_crush_margins
 AS WITH soybean_costs AS (
          SELECT date_trunc('week'::text, mars_grain_bids.report_begin_date) AS week_of,
@@ -71,9 +49,3 @@ AS WITH soybean_costs AS (
     round(r.soy_meal_revenues / r.crush_revenues * 100::numeric, 2) AS crush_meal_share
    FROM soybean_revenues r
      LEFT JOIN soybean_costs c ON r.week_of = c.week_of AND r."trade Loc" = c."trade Loc";
-'''
-
-# Execute statement
-
-conn.execute(stmt)
-print('Complete!!')
